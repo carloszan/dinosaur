@@ -2,7 +2,7 @@
   "name": "dinossauro",
   "version": "1.0.0",
   "description": "a dinosaur game",
-  "main": "game.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js --watch ./public",
     "test": "echo \"Error: no test specified\" && exit 1"
