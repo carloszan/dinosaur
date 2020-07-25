@@ -1,7 +1,8 @@
 export default function createKeyboardListener() {
   document.addEventListener('keydown', function (key) {
     notifyAll({
-      key: key.key
+      key: key.key,
+      player: 'player1'
     })
   })
 

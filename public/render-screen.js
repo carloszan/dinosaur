@@ -1,6 +1,6 @@
-function cleanScreen(ctx) {
+function cleanScreen(ctx, width, height) {
   ctx.fillStyle = 'white'
-  ctx.clearRect(0, 0, 20, 10);
+  ctx.clearRect(0, 0, width, height);
 }
 
 function setCanvasOriginToLowerLeftCorner(ctx, height) {
@@ -9,7 +9,8 @@ function setCanvasOriginToLowerLeftCorner(ctx, height) {
 }
 
 function render(ctx, game, requestAnimationFrame) {
-  cleanScreen(ctx)
+  game.update()
+  cleanScreen(ctx, game.state.width, game.state.height)
 
   for(let playerId in game.state.players) {
     const player = game.state.players[playerId]
