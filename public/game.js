@@ -1,27 +1,18 @@
-export default function createGame() {
+export default function createGame(configuration = {}) {
   const state = {
-    players: {
-      player1: {
-        x: 1,
-        y: 10,
-        speed: 0,
-        isJumping: false
-      },
-      player2: {
-        x: 4,
-        y: 9,
-        speed: 0,
-        isJumping: false
-      }
-    },
+    players: {},
+    obstacles: {},
     width: 40,
     height: 20,
-    gravity: 0.3
+    gravity: 0.3,
+    renderScreen: configuration.renderScreen
   }
 
-  const JumpSpeed = 1.8
+  let Time = 0
+  const JumpSpeed = 2.5
+  const ObstacleSpeedTime = 200
 
-  function update() {
+  function update(timestamp) {
     for(let playerId in state.players) {
       const player = state.players[playerId]
         
@@ -35,6 +26,26 @@ export default function createGame() {
         player.isJumping = false
       }
     }
+
+    if (timestamp - Time > ObstacleSpeedTime) {
+      for(let obstacleId in state.obstacles) {
+        const obstacle = state.obstacles[obstacleId]
+
+        obstacle.x -= 1
+        if (obstacle.x < 0) {
+          removeObstacle(obstacleId)
+          continue
+        }
+
+        checkColision(obstacleId)
+      }
+
+      Time = timestamp
+    }
+  }
+  
+  function draw(screen) {
+    state.renderScreen(screen, this, requestAnimationFrame)
   }
 
   function jump(command) {
@@ -46,20 +57,51 @@ export default function createGame() {
     console.log(player.speed)
   }
 
-  function draw() {
-
-  }
-
   function keyboardInput(command) {
     if (command.key != "ArrowUp")
       return
 
     jump({playerId: 'player1'})
   }
+  
+  function addPlayer(command) {
+    const playerId = command.playerId || Math.floor(Math.random() * 100)
+
+    state.players[playerId] = {
+      x: command.x,
+      y: command.y,
+      speed: 0,
+      isJumping: false
+    }
+  }
+
+  function addObstacle(command) {
+    const obstacleId = command.obstacleId || Math.floor(Math.random() * 100)
+    state.obstacles[obstacleId] = {
+      x: command.x,
+      y: command.y
+    }
+  }
+
+  function checkColision(obstacleId) {
+    const obstacle = state.obstacles[obstacleId]
+
+    for(let playerId in state.players) {
+      const player = state.players[playerId]
+      if (obstacle.x == player.x && player.y == obstacle.y)
+        console.log('collision')
+    }
+  }
+
+  function removeObstacle(obstacleId) {
+    delete state.obstacles[obstacleId]
+  }
 
   return {
     state,
     jump,
+    addPlayer,
+    addObstacle,
     keyboardInput,
     update,
     draw
