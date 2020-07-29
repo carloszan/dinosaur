@@ -10,7 +10,9 @@ export default function createGame(configuration = {}) {
 
   let Time = 0
   const JumpSpeed = 2.5
-  const ObstacleSpeedTime = 200
+  const ObstacleSpeedTime = 100
+  const InitialObstaclePosition = { x: 39, y: 0 }
+  let Collisions = 0
 
   function update(timestamp) {
     for(let playerId in state.players) {
@@ -28,6 +30,7 @@ export default function createGame(configuration = {}) {
     }
 
     if (timestamp - Time > ObstacleSpeedTime) {
+      maybeTryAddObstacle()
       for(let obstacleId in state.obstacles) {
         const obstacle = state.obstacles[obstacleId]
 
@@ -37,7 +40,7 @@ export default function createGame(configuration = {}) {
           continue
         }
 
-        checkColision(obstacleId)
+        checkCollision(obstacleId)
       }
 
       Time = timestamp
@@ -83,18 +86,26 @@ export default function createGame(configuration = {}) {
     }
   }
 
-  function checkColision(obstacleId) {
+  function checkCollision(obstacleId) {
     const obstacle = state.obstacles[obstacleId]
 
     for(let playerId in state.players) {
       const player = state.players[playerId]
       if (obstacle.x == player.x && player.y == obstacle.y)
-        console.log('collision')
+        console.log(Collisions++)
     }
   }
 
   function removeObstacle(obstacleId) {
     delete state.obstacles[obstacleId]
+  }
+
+  // 12.5% to add a obstacle. 1/8
+  function maybeTryAddObstacle() {
+    var percentage = Math.floor(Math.random() * 8 + 1)
+    if (percentage == 1) {
+      addObstacle(InitialObstaclePosition)
+    }
   }
 
   return {

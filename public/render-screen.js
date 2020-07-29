@@ -15,6 +15,7 @@ function render(ctx, game, requestAnimationFrame, timestamp) {
   for(let playerId in game.state.players) {
     const player = game.state.players[playerId]
     ctx.fillStyle = "#000000"
+    ctx.fillRect(player.x, player.y + 1, 1, 1)
     ctx.fillRect(player.x, player.y, 1, 1)
   }
 
